@@ -1,0 +1,11 @@
+/home/gregory/var/myTree/bin/Debug/netcoreapp2.2/myTree.deps.json
+/home/gregory/var/myTree/bin/Debug/netcoreapp2.2/myTree.runtimeconfig.json
+/home/gregory/var/myTree/bin/Debug/netcoreapp2.2/myTree.runtimeconfig.dev.json
+/home/gregory/var/myTree/bin/Debug/netcoreapp2.2/myTree.dll
+/home/gregory/var/myTree/bin/Debug/netcoreapp2.2/myTree.pdb
+/home/gregory/var/myTree/obj/Debug/netcoreapp2.2/myTree.csprojAssemblyReference.cache
+/home/gregory/var/myTree/obj/Debug/netcoreapp2.2/myTree.csproj.CoreCompileInputs.cache
+/home/gregory/var/myTree/obj/Debug/netcoreapp2.2/myTree.AssemblyInfoInputs.cache
+/home/gregory/var/myTree/obj/Debug/netcoreapp2.2/myTree.AssemblyInfo.cs
+/home/gregory/var/myTree/obj/Debug/netcoreapp2.2/myTree.dll
+/home/gregory/var/myTree/obj/Debug/netcoreapp2.2/myTree.pdb
