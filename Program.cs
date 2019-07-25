@@ -10,8 +10,10 @@ namespace myTree
 
         static void Main(string[] args)
         {
-            MyTree myTree = new MyTree();
-            myTree.printTree();
+            Algorithm algorithm = new Algorithm(args);
+            algorithm.execute();
+            //     MyTree myTree = new MyTree();
+            //     myTree.printTree();
         }
     }
 }
