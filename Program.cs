@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using myTree;
 
 namespace myTree
 {
     class Program
     {
+
         static void Main(string[] args)
         {
-            string path = System.Environment.CurrentDirectory;
-            Console.WriteLine(path);
+            MyTree myTree = new MyTree();
+            myTree.printTree();
         }
     }
 }
