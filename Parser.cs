@@ -7,6 +7,7 @@ namespace myTree
         public static List<string> parse(string[] args)
         {
             List<string> options = new List<string>();
+            if (args.Length == 0) options.Add("-d");
 
             bool needInt = false;
             for (int i = 0; i < args.Length; i++)
@@ -50,11 +51,12 @@ namespace myTree
                             break;
                         case "--help":
                             options.Add("--help");
-                            break;
+                            break; // здесь добавлять новые опции
                         default: return null;
                     }
                 }
             }
+            if (needInt) return null;
             return options;
         }
     }

@@ -10,12 +10,11 @@ namespace myTree
         public Algorithm(string[] args)
         {
             options = Parser.parse(args);
-            Printer.print(options);
         }
 
         public void execute()
         {
-
+            Printer.print(options);
         }
     }
 }

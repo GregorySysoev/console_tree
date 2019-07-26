@@ -7,13 +7,10 @@ namespace myTree
 {
     class Program
     {
-
         static void Main(string[] args)
         {
             Algorithm algorithm = new Algorithm(args);
             algorithm.execute();
-            //     MyTree myTree = new MyTree();
-            //     myTree.printTree();
         }
     }
 }
