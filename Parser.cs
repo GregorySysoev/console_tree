@@ -4,7 +4,7 @@ namespace myTree
 {
     public static class Parser
     {
-        public static List<string> parse(string[] args)
+        public static List<string> Parse(string[] args)
         {
             List<string> options = new List<string>();
             if (args.Length == 0) options.Add("-d");
@@ -30,22 +30,15 @@ namespace myTree
                     switch (args[i])
                     {
                         case "-d":
-                            options.Add("-d");
-                            needInt = true;
-                            break;
                         case "--depth":
                             options.Add("-d");
                             needInt = true;
                             break;
                         case "-s":
-                            options.Add("-s");
-                            break;
                         case "--size":
                             options.Add("-s");
                             break;
                         case "-h":
-                            options.Add("-h");
-                            break;
                         case "--human-readable":
                             options.Add("-h");
                             break;

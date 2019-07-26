@@ -6,9 +6,9 @@ namespace myTree
 {
     public static class Printer
     {
-        public static void print(List<string> options)
+        public static void Print(List<string> options /* TODO */)
         {
-            int Depth = -1;
+            int depth = -1;
             bool needSize = false;
             bool needHumanReadable = false;
             bool needHelp = false;
@@ -16,6 +16,7 @@ namespace myTree
             if (options == null)
             {
                 Console.WriteLine("Bad args");
+                Console.WriteLine("use --help");
             }
             else
             {
@@ -36,51 +37,56 @@ namespace myTree
                             break;
 
                         default:
-                            Int32.TryParse(i, out Depth);
+                            Int32.TryParse(i, out depth);
                             break;
                     }
                 }
-                if (needHelp) printHelp();
-                else printRecurs(Depth, 0, System.Environment.CurrentDirectory, needSize, needHumanReadable);
+                if (needHelp) PrintHelp();
+                else PrintRecurs(depth, 0, System.Environment.CurrentDirectory, needSize, needHumanReadable);
             }
         }
 
-        public static void printRecurs(int depth, int indent, string path,
+        public static void PrintRecurs(int depth, int indent, string path,
         bool needSize, bool needHumanReadable)
         {
             if (depth != 0)
             {
-                string[] dirs = Directory.GetDirectories(path);
+                string[] dirs = Directory.GetDirectories(path); // TODO
                 string[] files = Directory.GetFiles(path);
 
                 for (int i = 0; i < files.Length; i++)
                 {
-                    printIndent(indent);
-                    Console.Write(Path.GetFileName(files[i]));
-                    if (needHumanReadable) Console.Write(" " + convertBytesToHumanReadable(new FileInfo(files[i]).Length));
-                    else if (needSize) Console.Write(" (" + new FileInfo(files[i]).Length.ToString() + " Bytes)");
+                    PrintIndent(indent);
+                    Console.Write(Path.GetFileName(files[i])); // TODO
+                    if (needHumanReadable | needSize) Console.Write(" " + ConvertBytesToHumanReadable(new FileInfo(files[i]).Length, needHumanReadable));
                     Console.WriteLine();
                 }
 
                 for (int i = 0, localDepth = --depth; i < dirs.Length; i++)
                 {
-                    printIndent(indent);
+                    PrintIndent(indent);
                     Console.WriteLine(new DirectoryInfo(dirs[i]).Name);
-                    printRecurs(localDepth, indent + 4, (dirs[i]), needSize, needHumanReadable);
+                    PrintRecurs(localDepth, indent + 4, (dirs[i]), needSize, needHumanReadable);
                 }
             }
         }
 
-        public static void printHelp()
+        public static void PrintHelp()
         {
+            Console.WriteLine();
             Console.WriteLine("List of available commands:");
             Console.WriteLine();
             Console.WriteLine("-d --depth [num]  nesting level");
             Console.WriteLine("-s --size  show size of files");
-            Console.WriteLine("--help  show help");
+            Console.WriteLine("-h --human-readable  show size of files in human-readable view {Bytes, KB, ...}");
+            Console.WriteLine("--help show help");
+            Console.WriteLine();
+            Console.WriteLine("Example of using:");
+            Console.WriteLine("dotnet myTree.dll -d 5 -h");
+            Console.WriteLine();
         }
 
-        public static void printIndent(int indent)
+        public static void PrintIndent(int indent)
         {
             for (int i = 0; i < indent; i++)
             {
@@ -88,18 +94,39 @@ namespace myTree
             }
         }
 
-        public static string convertBytesToHumanReadable(long num)
+        public static string ConvertBytesToHumanReadable(long num, bool humanRead)
         {
-            string[] suffixes =
-{ "Bytes", "KB", "MB", "GB", "TB", "PB" };
-            int counter = 0;
-            decimal number = (decimal)num;
-            while (Math.Round(number / 1024) >= 1)
+            if (num == 0) // Ничего что несколько return'ов?
             {
-                number = number / 1024;
-                counter++;
+                return ("(empty)");
+
             }
-            return string.Format("({0:n1} {1})", number, suffixes[counter]);
+            if (!humanRead)
+            {
+                return string.Format("({0} {1})", num, "Bytes");
+            }
+            else
+            {
+                string[] suffixes =
+    { "Bytes", "KB", "MB", "GB", "TB", "PB" };
+
+                int counter = 0;
+                decimal number = (decimal)num;
+                while (!suffixes[counter].Equals("PB") && (Math.Round(number / 1024) >= 1))
+                {
+                    number = number / 1024;
+                    counter++;
+                }
+
+                if (number - decimal.Truncate(number) == 0) // Не нашёл у Decimal метода, чтобы получить только дробную часть.
+                {
+                    return string.Format("({0:} {1})", number, suffixes[counter]);
+                }
+                else
+                {
+                    return string.Format("({0:n1} {1})", number, suffixes[counter]);
+                }
+            }
         }
     }
 }

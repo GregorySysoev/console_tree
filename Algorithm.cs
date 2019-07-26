@@ -9,12 +9,12 @@ namespace myTree
 
         public Algorithm(string[] args)
         {
-            options = Parser.parse(args);
+            options = Parser.Parse(args);
         }
 
         public void execute()
         {
-            Printer.print(options);
+            Printer.Print(options);
         }
     }
 }
