@@ -35,7 +35,6 @@ namespace myTree
                             break;
                         case ("-d"):
                             break;
-
                         default:
                             Int32.TryParse(i, out depth);
                             break;
@@ -51,23 +50,47 @@ namespace myTree
         {
             if (depth != 0)
             {
-                string[] dirs = Directory.GetDirectories(path); // TODO
-                string[] files = Directory.GetFiles(path);
+                DirectoryInfo dir = new DirectoryInfo(path);
+                FileSystemInfo[] info = dir.GetFileSystemInfos();
 
-                for (int i = 0; i < files.Length; i++)
+                int localDepth = --depth;
+                foreach (FileSystemInfo i in info)
                 {
-                    PrintIndent(indent);
-                    Console.Write(Path.GetFileName(files[i])); // TODO
-                    if (needHumanReadable | needSize) Console.Write(" " + ConvertBytesToHumanReadable(new FileInfo(files[i]).Length, needHumanReadable));
-                    Console.WriteLine();
+
+                    if (i is DirectoryInfo)
+                    {
+                        PrintIndent(indent);
+                        DirectoryInfo dInfo = (DirectoryInfo)i;
+                        Console.WriteLine(dInfo.Name);
+                        PrintRecurs(localDepth, indent + 4, dInfo.FullName, needSize, needHumanReadable);
+                    }
+                    else
+                    {
+                        PrintIndent(indent);
+                        FileInfo fInfo = (FileInfo)i;
+                        Console.Write(fInfo.Name);
+                        if (needHumanReadable | needSize) Console.Write(" " + ConvertBytesToHumanReadable(fInfo.Length, needHumanReadable));
+                        Console.WriteLine();
+                    }
                 }
 
-                for (int i = 0, localDepth = --depth; i < dirs.Length; i++)
-                {
-                    PrintIndent(indent);
-                    Console.WriteLine(new DirectoryInfo(dirs[i]).Name);
-                    PrintRecurs(localDepth, indent + 4, (dirs[i]), needSize, needHumanReadable);
-                }
+                // string[] dirs = Directory.GetDirectories(path); // TODO
+                // string[] files = Directory.GetFiles(path);
+
+                // for (int i = 0; i < files.Length; i++)
+                // {
+                //     PrintIndent(indent);
+                //     Console.Write(Path.GetFileName(files[i]));
+                //     if (needHumanReadable | needSize) Console.Write(" " + ConvertBytesToHumanReadable(new FileInfo(files[i]).Length, needHumanReadable));
+                //     Console.WriteLine();
+                // }
+
+                // for (int i = 0, localDepth = --depth; i < dirs.Length; i++)
+                // {
+                //     PrintIndent(indent);
+                //     Console.WriteLine(new DirectoryInfo(dirs[i]).Name);
+                //     PrintRecurs(localDepth, indent + 4, (dirs[i]), needSize, needHumanReadable);
+                // }
             }
         }
 
@@ -99,7 +122,6 @@ namespace myTree
             if (num == 0) // Ничего что несколько return'ов?
             {
                 return ("(empty)");
-
             }
             if (!humanRead)
             {
