@@ -12,6 +12,7 @@ namespace myTree
             bool needSize = false;
             bool needHumanReadable = false;
             bool needHelp = false;
+            List<int> pipes = new List<int>();
 
             if (options == null)
             {
@@ -41,56 +42,48 @@ namespace myTree
                     }
                 }
                 if (needHelp) PrintHelp();
-                else PrintRecurs(depth, 0, System.Environment.CurrentDirectory, needSize, needHumanReadable);
+                else PrintRecurs(depth, 0, System.Environment.CurrentDirectory, needSize, needHumanReadable, ref pipes/* new List<int>()*/);
             }
         }
 
         public static void PrintRecurs(int depth, int indent, string path,
-        bool needSize, bool needHumanReadable)
+        bool needSize, bool needHumanReadable, ref List<int> pipes)
         {
             if (depth != 0)
             {
                 DirectoryInfo dir = new DirectoryInfo(path);
                 FileSystemInfo[] info = dir.GetFileSystemInfos();
+                pipes.Add(indent);
 
-                int localDepth = --depth;
-                foreach (FileSystemInfo i in info)
+                for (int i = 0, localDepth = --depth; i < info.Length; i++)
                 {
-
-                    if (i is DirectoryInfo)
+                    if (i == info.Length - 1)
                     {
-                        PrintIndent(indent);
-                        DirectoryInfo dInfo = (DirectoryInfo)i;
-                        Console.WriteLine(dInfo.Name);
-                        PrintRecurs(localDepth, indent + 4, dInfo.FullName, needSize, needHumanReadable);
+                        pipes.Remove(indent);
+                        PrintIndent(indent, ref pipes);
+                        Console.Write("└──");
+
                     }
                     else
                     {
-                        PrintIndent(indent);
-                        FileInfo fInfo = (FileInfo)i;
+                        PrintIndent(indent, ref pipes);
+                        Console.Write("├──");
+                    }
+
+                    if (info[i] is DirectoryInfo)
+                    {
+                        DirectoryInfo dInfo = (DirectoryInfo)info[i];
+                        Console.WriteLine(dInfo.Name);
+                        PrintRecurs(localDepth, indent + 4, dInfo.FullName, needSize, needHumanReadable, ref pipes);
+                    }
+                    else
+                    {
+                        FileInfo fInfo = (FileInfo)info[i];
                         Console.Write(fInfo.Name);
                         if (needHumanReadable | needSize) Console.Write(" " + ConvertBytesToHumanReadable(fInfo.Length, needHumanReadable));
                         Console.WriteLine();
                     }
                 }
-
-                // string[] dirs = Directory.GetDirectories(path); // TODO
-                // string[] files = Directory.GetFiles(path);
-
-                // for (int i = 0; i < files.Length; i++)
-                // {
-                //     PrintIndent(indent);
-                //     Console.Write(Path.GetFileName(files[i]));
-                //     if (needHumanReadable | needSize) Console.Write(" " + ConvertBytesToHumanReadable(new FileInfo(files[i]).Length, needHumanReadable));
-                //     Console.WriteLine();
-                // }
-
-                // for (int i = 0, localDepth = --depth; i < dirs.Length; i++)
-                // {
-                //     PrintIndent(indent);
-                //     Console.WriteLine(new DirectoryInfo(dirs[i]).Name);
-                //     PrintRecurs(localDepth, indent + 4, (dirs[i]), needSize, needHumanReadable);
-                // }
             }
         }
 
@@ -109,14 +102,24 @@ namespace myTree
             Console.WriteLine();
         }
 
-        public static void PrintIndent(int indent)
+
+        public static void PrintIndent(int indent, ref List<int> pipes)
         {
             for (int i = 0; i < indent; i++)
             {
-                Console.Write(' ');
+                if (i % 4 == 0)
+                {
+                    if (pipes.Contains(i))
+                    {
+                        Console.Write("│");
+                    }
+                }
+                else
+                {
+                    Console.Write(" ");
+                }
             }
         }
-
         public static string ConvertBytesToHumanReadable(long num, bool humanRead)
         {
             if (num == 0) // Ничего что несколько return'ов?
