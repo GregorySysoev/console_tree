@@ -72,6 +72,13 @@ namespace myTree
 
                     if (info[i] is DirectoryInfo)
                     {
+                        if (i == info.Length - 1)
+                        {
+                            while (pipes.Contains(indent))
+                            {
+                                pipes.Remove(indent);
+                            }
+                        }
                         DirectoryInfo dInfo = (DirectoryInfo)info[i];
                         Console.WriteLine(dInfo.Name);
                         PrintRecurs(localDepth, indent + 4, dInfo.FullName, needSize, needHumanReadable, ref pipes);
