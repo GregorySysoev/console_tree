@@ -6,7 +6,6 @@ namespace myTree
 {
     public static class Printer
     {
-        // delegate int Step(int x);
         public static void Print(ref Options options)
         {
 
@@ -51,7 +50,16 @@ namespace myTree
                     if (info[i] is DirectoryInfo)
                     {
                         DirectoryInfo dInfo = (DirectoryInfo)info[i];
-                        Console.WriteLine(dInfo.Name);
+                        Console.Write(dInfo.Name);
+                        if (options.sorting.OrderByDateOfCreation)
+                        {
+                            Console.Write(" " + dInfo.CreationTime.ToString() + " ");
+                        }
+                        else if (options.sorting.OrderByDateOfTransorm)
+                        {
+                            Console.Write(" " + dInfo.CreationTime.ToString() + " ");
+                        }
+                        Console.WriteLine();
                         PrintRecursively(localDepth, indent + 4, dInfo.FullName, ref pipes, ref options);
                     }
                     else
@@ -62,13 +70,22 @@ namespace myTree
                         {
                             Console.Write(" " + ConvertBytesToHumanReadable(fInfo.Length, options.NeedHumanReadable));
                         }
+
+                        if (options.sorting.OrderByDateOfCreation)
+                        {
+                            Console.Write(" " + fInfo.CreationTime.ToString() + " ");
+                        }
+                        else if (options.sorting.OrderByDateOfTransorm)
+                        {
+                            Console.Write(" " + fInfo.CreationTime.ToString() + " ");
+                        }
+
                         Console.WriteLine();
                     }
                 }
                 pipes.Remove(indent);
             }
         }
-
         public static void PrintHelp()
         {
             Console.WriteLine();
@@ -83,7 +100,6 @@ namespace myTree
             Console.WriteLine("dotnet myTree.dll -d 5 -h");
             Console.WriteLine();
         }
-
         public static void PrintIndent(int indent, ref List<int> pipes)
         {
             for (int i = 0; i < indent; i++)
@@ -101,7 +117,6 @@ namespace myTree
                 }
             }
         }
-
         public static string ConvertBytesToHumanReadable(long num, bool humanRead)
         {
             if (num == 0)
@@ -136,22 +151,27 @@ namespace myTree
                 }
             }
         }
-
         public static void SortArray(ref FileSystemInfo[] array, Options options)
         {
             if (options.sorting.OrderByAlphabet)
             {
-                NameComparer abc = new NameComparer();
-                Array.Sort(array, abc);
+                NameComparer nameComparer = new NameComparer();
+                Array.Sort(array, nameComparer);
             }
             else if (options.sorting.OrderBySize)
             {
+                SizeComparer sizeComparer = new SizeComparer();
+                Array.Sort(array, sizeComparer);
             }
             else if (options.sorting.OrderByDateOfTransorm)
             {
+                ChangeTimeComparer changeTimeComparer = new ChangeTimeComparer();
+                Array.Sort(array, changeTimeComparer);
             }
             else if (options.sorting.OrderByDateOfCreation)
             {
+                CreateTimeComparer createTimeComparer = new CreateTimeComparer();
+                Array.Sort(array, createTimeComparer);
             }
 
             if (options.sorting.Reverse)
@@ -168,16 +188,19 @@ namespace myTree
             return f1.Name.CompareTo(f2.Name);
         }
     }
-
     public class SizeComparer : IComparer<FileSystemInfo>
     {
         public int Compare(FileSystemInfo f1, FileSystemInfo f2)
         {
-            if (f1 is Directory)
+            if ((f1 is DirectoryInfo) && (f2 is DirectoryInfo))
+            {
+                return 0;
+            }
+            else if (f1 is DirectoryInfo)
             {
                 return -1;
             }
-            else if (f2 is Directory)
+            else if (f2 is DirectoryInfo)
             {
                 return 1;
             }
@@ -189,19 +212,18 @@ namespace myTree
             }
         }
     }
-
     public class ChangeTimeComparer : IComparer<FileSystemInfo>
     {
         public int Compare(FileSystemInfo f1, FileSystemInfo f2)
         {
-            return f1.CreationTime.CompareTo(f1.CreationTime);
+            return f1.LastWriteTime.CompareTo(f1.LastWriteTime);
         }
     }
     public class CreateTimeComparer : IComparer<FileSystemInfo>
     {
         public int Compare(FileSystemInfo f1, FileSystemInfo f2)
         {
-            return f1.LastWriteTime.CompareTo(f2.LastWriteTime);
+            return f1.CreationTime.CompareTo(f2.CreationTime);
         }
     }
 }
