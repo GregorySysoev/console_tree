@@ -6,48 +6,23 @@ namespace myTree
 {
     public static class Printer
     {
-        public static void Print(List<string> options /* TODO */)
+        public static void Print(ref Options options)
         {
-            int depth = -1;
-            bool needSize = false;
-            bool needHumanReadable = false;
-            bool needHelp = false;
-            List<int> pipes = new List<int>();
 
-            if (options == null)
+            if (options.WasError)
             {
                 Console.WriteLine("Bad args");
                 Console.WriteLine("use --help");
             }
             else
             {
-                foreach (var i in options)
-                {
-                    switch (i)
-                    {
-                        case ("-s"):
-                            needSize = true;
-                            break;
-                        case ("-h"):
-                            needHumanReadable = true;
-                            break;
-                        case ("--help"):
-                            needHelp = true;
-                            break;
-                        case ("-d"):
-                            break;
-                        default:
-                            Int32.TryParse(i, out depth);
-                            break;
-                    }
-                }
-                if (needHelp) PrintHelp();
-                else PrintRecurs(depth, 0, System.Environment.CurrentDirectory, needSize, needHumanReadable, ref pipes/* new List<int>()*/);
+                List<int> pipes = new List<int>();
+                if (options.NeedHelp) PrintHelp();
+                else PrintRecursively(options.Depth, 0, System.Environment.CurrentDirectory, ref pipes, ref options);
             }
         }
 
-        public static void PrintRecurs(int depth, int indent, string path,
-        bool needSize, bool needHumanReadable, ref List<int> pipes)
+        public static void PrintRecursively(int depth, int indent, string path, ref List<int> pipes, ref Options options)
         {
             if (depth != 0)
             {
@@ -72,25 +47,19 @@ namespace myTree
 
                     if (info[i] is DirectoryInfo)
                     {
-                        if (i == info.Length - 1)
-                        {
-                            while (pipes.Contains(indent))
-                            {
-                                pipes.Remove(indent);
-                            }
-                        }
                         DirectoryInfo dInfo = (DirectoryInfo)info[i];
                         Console.WriteLine(dInfo.Name);
-                        PrintRecurs(localDepth, indent + 4, dInfo.FullName, needSize, needHumanReadable, ref pipes);
+                        PrintRecursively(localDepth, indent + 4, dInfo.FullName, ref pipes, ref options);
                     }
                     else
                     {
                         FileInfo fInfo = (FileInfo)info[i];
                         Console.Write(fInfo.Name);
-                        if (needHumanReadable | needSize) Console.Write(" " + ConvertBytesToHumanReadable(fInfo.Length, needHumanReadable));
+                        if (options.NeedHumanReadable | options.NeedSize) Console.Write(" " + ConvertBytesToHumanReadable(fInfo.Length, options.NeedHumanReadable));
                         Console.WriteLine();
                     }
                 }
+                pipes.Remove(indent);
             }
         }
 
@@ -109,7 +78,6 @@ namespace myTree
             Console.WriteLine();
         }
 
-
         public static void PrintIndent(int indent, ref List<int> pipes)
         {
             for (int i = 0; i < indent; i++)
@@ -127,12 +95,14 @@ namespace myTree
                 }
             }
         }
+
         public static string ConvertBytesToHumanReadable(long num, bool humanRead)
         {
-            if (num == 0) // Ничего что несколько return'ов?
+            if (num == 0)
             {
                 return ("(empty)");
             }
+
             if (!humanRead)
             {
                 return string.Format("({0} {1})", num, "Bytes");
@@ -150,7 +120,7 @@ namespace myTree
                     counter++;
                 }
 
-                if (number - decimal.Truncate(number) == 0) // Не нашёл у Decimal метода, чтобы получить только дробную часть.
+                if (number - decimal.Truncate(number) == 0)
                 {
                     return string.Format("({0:} {1})", number, suffixes[counter]);
                 }

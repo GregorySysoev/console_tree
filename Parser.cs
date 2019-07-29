@@ -4,24 +4,27 @@ namespace myTree
 {
     public static class Parser
     {
-        public static List<string> Parse(string[] args)
+        public static void Parse(string[] args, out Options options)
         {
-            List<string> options = new List<string>();
-            if (args.Length == 0) options.Add("-d");
+            bool _wasError = false;
+            int _depth = -1;
+            bool _needSize = false;
+            bool _needHumanReadable = false;
+            bool _needHelp = false;
 
             bool needInt = false;
-            for (int i = 0; i < args.Length; i++)
+            for (int i = 0; (i < args.Length) & (!_wasError); i++)
             {
                 if (needInt)
                 {
                     bool isNumeric = int.TryParse(args[i], out int n);
                     if (isNumeric)
                     {
-                        options.Add(n.ToString());
+                        _depth = n;
                     }
                     else
                     {
-                        return null;
+                        _wasError = true;
                     }
                     needInt = false;
                 }
@@ -31,26 +34,38 @@ namespace myTree
                     {
                         case "-d":
                         case "--depth":
-                            options.Add("-d");
                             needInt = true;
                             break;
                         case "-s":
                         case "--size":
-                            options.Add("-s");
+                            _needSize = true;
                             break;
                         case "-h":
                         case "--human-readable":
-                            options.Add("-h");
+                            _needHumanReadable = true;
                             break;
                         case "--help":
-                            options.Add("--help");
-                            break; // здесь добавлять новые опции
-                        default: return null;
+                            _needHelp = true;
+                            break;
+                        default:
+                            _wasError = true;
+                            break;
                     }
                 }
             }
-            if (needInt) return null;
-            return options;
+
+            if (needInt)
+            {
+                _wasError = true;
+            }
+
+            options = new Options(
+                _wasError,
+                _needSize,
+                _needHumanReadable,
+                _needHelp,
+                _depth
+            );
         }
     }
 }
