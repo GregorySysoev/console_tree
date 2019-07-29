@@ -6,6 +6,7 @@ namespace myTree
 {
     public static class Printer
     {
+        // delegate int Step(int x);
         public static void Print(ref Options options)
         {
 
@@ -29,6 +30,8 @@ namespace myTree
                 DirectoryInfo dir = new DirectoryInfo(path);
                 FileSystemInfo[] info = dir.GetFileSystemInfos();
                 pipes.Add(indent);
+
+                SortArray(ref info, options);
 
                 for (int i = 0, localDepth = --depth; i < info.Length; i++)
                 {
@@ -55,7 +58,10 @@ namespace myTree
                     {
                         FileInfo fInfo = (FileInfo)info[i];
                         Console.Write(fInfo.Name);
-                        if (options.NeedHumanReadable | options.NeedSize) Console.Write(" " + ConvertBytesToHumanReadable(fInfo.Length, options.NeedHumanReadable));
+                        if (options.NeedHumanReadable | options.NeedSize)
+                        {
+                            Console.Write(" " + ConvertBytesToHumanReadable(fInfo.Length, options.NeedHumanReadable));
+                        }
                         Console.WriteLine();
                     }
                 }
@@ -105,7 +111,7 @@ namespace myTree
 
             if (!humanRead)
             {
-                return string.Format("({0} {1})", num, "Bytes");
+                return string.Format($"({num} Bytes)");
             }
             else
             {
@@ -114,9 +120,9 @@ namespace myTree
 
                 int counter = 0;
                 decimal number = (decimal)num;
-                while (!suffixes[counter].Equals("PB") && (Math.Round(number / 1024) >= 1))
+                while ((counter < 5) && (Math.Round(number / 1024) >= 1))
                 {
-                    number = number / 1024;
+                    number /= 1024;
                     counter++;
                 }
 
@@ -129,6 +135,73 @@ namespace myTree
                     return string.Format("({0:n1} {1})", number, suffixes[counter]);
                 }
             }
+        }
+
+        public static void SortArray(ref FileSystemInfo[] array, Options options)
+        {
+            if (options.sorting.OrderByAlphabet)
+            {
+                NameComparer abc = new NameComparer();
+                Array.Sort(array, abc);
+            }
+            else if (options.sorting.OrderBySize)
+            {
+            }
+            else if (options.sorting.OrderByDateOfTransorm)
+            {
+            }
+            else if (options.sorting.OrderByDateOfCreation)
+            {
+            }
+
+            if (options.sorting.Reverse)
+            {
+                Array.Reverse(array);
+            }
+        }
+    }
+
+    public class NameComparer : IComparer<FileSystemInfo>
+    {
+        public int Compare(FileSystemInfo f1, FileSystemInfo f2)
+        {
+            return f1.Name.CompareTo(f2.Name);
+        }
+    }
+
+    public class SizeComparer : IComparer<FileSystemInfo>
+    {
+        public int Compare(FileSystemInfo f1, FileSystemInfo f2)
+        {
+            if (f1 is Directory)
+            {
+                return -1;
+            }
+            else if (f2 is Directory)
+            {
+                return 1;
+            }
+            else
+            {
+                FileInfo first = (FileInfo)f1;
+                FileInfo second = (FileInfo)f2;
+                return first.Length.CompareTo(second.Length);
+            }
+        }
+    }
+
+    public class ChangeTimeComparer : IComparer<FileSystemInfo>
+    {
+        public int Compare(FileSystemInfo f1, FileSystemInfo f2)
+        {
+            return f1.CreationTime.CompareTo(f1.CreationTime);
+        }
+    }
+    public class CreateTimeComparer : IComparer<FileSystemInfo>
+    {
+        public int Compare(FileSystemInfo f1, FileSystemInfo f2)
+        {
+            return f1.LastWriteTime.CompareTo(f2.LastWriteTime);
         }
     }
 }

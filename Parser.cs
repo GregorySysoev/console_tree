@@ -6,29 +6,36 @@ namespace myTree
     {
         public static void Parse(string[] args, out Options options)
         {
-            bool _wasError = false;
-            int _depth = -1;
-            bool _needSize = false;
-            bool _needHumanReadable = false;
-            bool _needHelp = false;
+            bool wasError = false;
+            int depth = -1;
+            bool needSize = false;
+            bool needHumanReadable = false;
+            bool needHelp = false;
+
+            bool orderByAlphabet = false;
+            bool orderBySize = false;
+            bool orderByDateOfTransorm = false;
+            bool orderByDateOfCreation = false;
+            bool orderReverse = false;
 
             bool needInt = false;
-            for (int i = 0; (i < args.Length) & (!_wasError); i++)
+            bool needFlag = false;
+            for (int i = 0; (i < args.Length) & (!wasError); i++)
             {
                 if (needInt)
                 {
                     bool isNumeric = int.TryParse(args[i], out int n);
                     if (isNumeric)
                     {
-                        _depth = n;
+                        depth = n;
                     }
                     else
                     {
-                        _wasError = true;
+                        wasError = true;
                     }
                     needInt = false;
                 }
-                else
+                else if (!needFlag)
                 {
                     switch (args[i])
                     {
@@ -38,33 +45,69 @@ namespace myTree
                             break;
                         case "-s":
                         case "--size":
-                            _needSize = true;
+                            needSize = true;
                             break;
                         case "-h":
                         case "--human-readable":
-                            _needHumanReadable = true;
+                            needHumanReadable = true;
                             break;
                         case "--help":
-                            _needHelp = true;
+                            needHelp = true;
+                            break;
+                        case "-o":
+                        case "--order-by":
+                            needFlag = true;
+                            break;
+                        case "-r":
+                        case "--reverse":
+                            orderReverse = true;
                             break;
                         default:
-                            _wasError = true;
+                            wasError = true;
                             break;
                     }
                 }
+                else
+                {
+                    switch (args[i])
+                    {
+                        case "a":
+                            orderByAlphabet = true;
+                            needFlag = false;
+                            break;
+                        case "s":
+                            orderBySize = true;
+                            break;
+                        case "t":
+                            orderByDateOfTransorm = true;
+                            break;
+                        case "c":
+                            orderByDateOfCreation = true;
+                            break;
+                        default:
+                            wasError = true;
+                            break;
+                    }
+                    needFlag = false;
+                }
             }
 
-            if (needInt)
+            if ((needInt) | (needFlag))
             {
-                _wasError = true;
+                wasError = true;
             }
 
             options = new Options(
-                _wasError,
-                _needSize,
-                _needHumanReadable,
-                _needHelp,
-                _depth
+                wasError,
+                needSize,
+                needHumanReadable,
+                needHelp,
+                depth,
+                orderByAlphabet,
+                orderBySize,
+                orderByDateOfTransorm,
+                orderByDateOfCreation,
+                orderReverse
             );
         }
     }

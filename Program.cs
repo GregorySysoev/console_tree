@@ -10,7 +10,7 @@ namespace myTree
         static void Main(string[] args)
         {
             Algorithm algorithm = new Algorithm(args);
-            algorithm.execute();
+            algorithm.Execute();
         }
     }
 }

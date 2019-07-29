@@ -5,28 +5,43 @@ namespace myTree
 {
     public class Options
     {
-        private bool wasError { get; }
-        public bool WasError => wasError;
+        // Общие параметры
+        public bool WasError { get; }
+        public bool NeedHumanReadable { get; }
+        public bool NeedSize { get; }
+        public bool NeedHelp { get; }
+        public int Depth { get; }
 
-        private bool needHumanReadable { get; }
-        public bool NeedHumanReadable => needHumanReadable;
-
-        private bool needSize { get; }
-        public bool NeedSize => needSize;
-
-        private bool needHelp { get; }
-        public bool NeedHelp => needHelp;
-
-        private int depth { get; }
-        public int Depth => depth;
-
-        public Options(bool _wasError, bool _needSize, bool _needHuman_readable, bool _needHelp, int _depth)
+        public struct Sorting
         {
-            wasError = _wasError;
-            needSize = _needSize;
-            needHumanReadable = _needHuman_readable;
-            needHelp = _needHelp;
-            depth = _depth;
+            public bool OrderByAlphabet { get; }
+            public bool OrderBySize { get; }
+            public bool OrderByDateOfTransorm { get; }
+            public bool OrderByDateOfCreation { get; }
+            public bool Reverse { get; }
+
+            public Sorting(bool orderByAlphabet, bool orderBySize, bool orderByDateOfTransorm, bool orderByDateOfCreation, bool reverse)
+            {
+                OrderByAlphabet = orderByAlphabet;
+                OrderBySize = orderBySize;
+                OrderByDateOfTransorm = orderByDateOfTransorm;
+                OrderByDateOfCreation = orderByDateOfCreation;
+                Reverse = reverse;
+            }
+        }
+
+        public Sorting sorting;
+        public Options(bool wasError, bool needSize, bool needHumanReadable, bool needHelp,
+        int depth, bool orderByAlphabet, bool orderBySize, bool orderByDateOfTransorm,
+        bool orderByDateOfCreation, bool reverse)
+        {
+            WasError = wasError;
+            NeedSize = needSize;
+            NeedHumanReadable = needHumanReadable;
+            NeedHelp = needHelp;
+            Depth = depth;
+
+            sorting = new Sorting(orderByAlphabet, orderBySize, orderByDateOfTransorm, orderByDateOfCreation, reverse);
         }
     }
     public class Algorithm
@@ -37,7 +52,7 @@ namespace myTree
         {
             Parser.Parse(args, out options);
         }
-        public void execute()
+        public void Execute()
         {
             Printer.Print(ref options);
         }
