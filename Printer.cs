@@ -75,7 +75,7 @@ namespace myTree
 
                         if (options.sorting.OrderByDateOfCreation)
                         {
-                            _writer.Write(" " + fInfo.LastWriteTime.ToString());
+                            _writer.Write(" " + fInfo.CreationTime.ToString());
                         }
                         else if (options.sorting.OrderByDateOfTransorm)
                         {
