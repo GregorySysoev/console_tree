@@ -4,21 +4,23 @@ using System;
 
 namespace myTree
 {
-    public static class Printer
+    public class Printer
     {
-        public static void Print(ref Options options)
+        private static IWriter _writer;
+        public static void Print(ref Options options, IWriter writer, string path)
         {
+            _writer = writer;
 
             if (options.WasError)
             {
-                Console.WriteLine("Bad args");
-                Console.WriteLine("use --help");
+                _writer.WriteLine("Bad args");
+                _writer.WriteLine("use --help");
             }
             else
             {
                 List<int> pipes = new List<int>();
                 if (options.NeedHelp) PrintHelp();
-                else PrintRecursively(options.Depth, 0, System.Environment.CurrentDirectory, ref pipes, ref options);
+                else PrintRecursively(options.Depth, 0, path, ref pipes, ref options);
             }
         }
 
@@ -38,49 +40,49 @@ namespace myTree
                     {
                         pipes.Remove(indent);
                         PrintIndent(indent, ref pipes);
-                        Console.Write("└──");
+                        _writer.Write("└──");
 
                     }
                     else
                     {
                         PrintIndent(indent, ref pipes);
-                        Console.Write("├──");
+                        _writer.Write("├──");
                     }
 
                     if (info[i] is DirectoryInfo)
                     {
                         DirectoryInfo dInfo = (DirectoryInfo)info[i];
-                        Console.Write(dInfo.Name);
+                        _writer.Write(dInfo.Name);
                         if (options.sorting.OrderByDateOfCreation)
                         {
-                            Console.Write(" " + dInfo.CreationTime.ToString() + " ");
+                            _writer.Write(" " + dInfo.CreationTime.ToString());
                         }
                         else if (options.sorting.OrderByDateOfTransorm)
                         {
-                            Console.Write(" " + dInfo.CreationTime.ToString() + " ");
+                            _writer.Write(" " + dInfo.CreationTime.ToString());
                         }
-                        Console.WriteLine();
+                        _writer.WriteLine();
                         PrintRecursively(localDepth, indent + 4, dInfo.FullName, ref pipes, ref options);
                     }
                     else
                     {
                         FileInfo fInfo = (FileInfo)info[i];
-                        Console.Write(fInfo.Name);
+                        _writer.Write(fInfo.Name);
                         if (options.NeedHumanReadable | options.NeedSize)
                         {
-                            Console.Write(" " + ConvertBytesToHumanReadable(fInfo.Length, options.NeedHumanReadable));
+                            _writer.Write(" " + ConvertBytesToHumanReadable(fInfo.Length, options.NeedHumanReadable));
                         }
 
                         if (options.sorting.OrderByDateOfCreation)
                         {
-                            Console.Write(" " + fInfo.CreationTime.ToString() + " ");
+                            _writer.Write(" " + fInfo.LastWriteTime.ToString());
                         }
                         else if (options.sorting.OrderByDateOfTransorm)
                         {
-                            Console.Write(" " + fInfo.CreationTime.ToString() + " ");
+                            _writer.Write(" " + fInfo.LastWriteTime.ToString());
                         }
 
-                        Console.WriteLine();
+                        _writer.WriteLine();
                     }
                 }
                 pipes.Remove(indent);
@@ -88,25 +90,26 @@ namespace myTree
         }
         public static void PrintHelp()
         {
-            Console.WriteLine();
-            Console.WriteLine("List of available commands:");
-            Console.WriteLine();
-            Console.WriteLine("-d --depth [num]  nesting level");
-            Console.WriteLine("-s --size  show size of files");
-            Console.WriteLine("-h --human-readable  show size of files in human-readable view {Bytes, KB, ...}");
-            Console.WriteLine("-o --order-by [flag] order of elements in tree");
-            Console.WriteLine("Available flags:");
-            Console.WriteLine("a - order by alphabet");
-            Console.WriteLine("s - order by size");
-            Console.WriteLine("t - order by time of last change");
-            Console.WriteLine("c - order by time of creation");
-            Console.WriteLine();
+            _writer.WriteLine();
+            _writer.WriteLine("List of available commands:");
+            _writer.WriteLine();
+            _writer.WriteLine("-d --depth [num]  nesting level");
+            _writer.WriteLine("-s --size  show size of files");
+            _writer.WriteLine("-h --human-readable  show size of files in human-readable view {Bytes, KB, ...}");
+            _writer.WriteLine("-o --order-by [flag] order of elements in tree");
+            _writer.WriteLine();
+            _writer.WriteLine("Available flags:");
+            _writer.WriteLine("a - order by alphabet");
+            _writer.WriteLine("s - order by size");
+            _writer.WriteLine("t - order by time of last change");
+            _writer.WriteLine("c - order by time of creation");
+            _writer.WriteLine();
 
-            Console.WriteLine("--help show help");
-            Console.WriteLine();
-            Console.WriteLine("Example of using:");
-            Console.WriteLine("dotnet myTree.dll -d 5 -h -o a");
-            Console.WriteLine();
+            _writer.WriteLine("--help show help");
+            _writer.WriteLine();
+            _writer.WriteLine("Example of using:");
+            _writer.WriteLine("dotnet myTree.dll -d 5 -h -o a");
+            _writer.WriteLine();
         }
         public static void PrintIndent(int indent, ref List<int> pipes)
         {
@@ -116,12 +119,12 @@ namespace myTree
                 {
                     if (pipes.Contains(i))
                     {
-                        Console.Write("│");
+                        _writer.Write("│");
                     }
                 }
                 else
                 {
-                    Console.Write(" ");
+                    _writer.Write(" ");
                 }
             }
         }

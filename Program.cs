@@ -9,7 +9,8 @@ namespace myTree
     {
         static void Main(string[] args)
         {
-            Algorithm algorithm = new Algorithm(args);
+            IWriter writer = new ConsoleWriter();
+            Algorithm algorithm = new Algorithm(args, writer);
             algorithm.Execute();
         }
     }

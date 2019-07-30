@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System;
+using myTree;
 
 namespace myTree
 {
@@ -47,14 +48,15 @@ namespace myTree
     public class Algorithm
     {
         Options options;
-
-        public Algorithm(string[] args)
+        private IWriter _writer;
+        public Algorithm(string[] args, IWriter writer)
         {
+            _writer = writer;
             Parser.Parse(args, out options);
         }
         public void Execute()
         {
-            Printer.Print(ref options);
+            Printer.Print(ref options, _writer, System.Environment.CurrentDirectory);
         }
     }
 }
