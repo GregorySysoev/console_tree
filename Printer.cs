@@ -94,10 +94,18 @@ namespace myTree
             Console.WriteLine("-d --depth [num]  nesting level");
             Console.WriteLine("-s --size  show size of files");
             Console.WriteLine("-h --human-readable  show size of files in human-readable view {Bytes, KB, ...}");
+            Console.WriteLine("-o --order-by [flag] order of elements in tree");
+            Console.WriteLine("Available flags:");
+            Console.WriteLine("a - order by alphabet");
+            Console.WriteLine("s - order by size");
+            Console.WriteLine("t - order by time of last change");
+            Console.WriteLine("c - order by time of creation");
+            Console.WriteLine();
+
             Console.WriteLine("--help show help");
             Console.WriteLine();
             Console.WriteLine("Example of using:");
-            Console.WriteLine("dotnet myTree.dll -d 5 -h");
+            Console.WriteLine("dotnet myTree.dll -d 5 -h -o a");
             Console.WriteLine();
         }
         public static void PrintIndent(int indent, ref List<int> pipes)

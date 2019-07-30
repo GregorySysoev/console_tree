@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/gregory/var/myTree/myTree.csproj": {}
+    "/home/gregory/var/proj/myTree/myTree.csproj": {}
   },
   "projects": {
-    "/home/gregory/var/myTree/myTree.csproj": {
+    "/home/gregory/var/proj/myTree/myTree.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/gregory/var/myTree/myTree.csproj",
+        "projectUniqueName": "/home/gregory/var/proj/myTree/myTree.csproj",
         "projectName": "myTree",
-        "projectPath": "/home/gregory/var/myTree/myTree.csproj",
+        "projectPath": "/home/gregory/var/proj/myTree/myTree.csproj",
         "packagesPath": "/home/gregory/.nuget/packages/",
-        "outputPath": "/home/gregory/var/myTree/obj/",
+        "outputPath": "/home/gregory/var/proj/myTree/obj/",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "/usr/share/dotnet/sdk/NuGetFallbackFolder"
